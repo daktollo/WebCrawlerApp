@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[oc]
+.venv/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+
+# Local secrets
+.env
