@@ -22,7 +22,7 @@ class RobotsRule:
 @dataclass
 class RobotsPolicy:
     rules: list[RobotsRule] = field(default_factory=list)
-    delay_ms: int = config.MIN_REQUEST_DELAY_MS
+    delay_ms: int = field(default_factory=lambda: config.MIN_REQUEST_DELAY_MS)
 
     def to_json(self) -> dict:
         return {"rules": [{"path": rule.path, "allow": rule.allow} for rule in self.rules], "delayMs": self.delay_ms}

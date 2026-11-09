@@ -2,6 +2,7 @@
 
 import re
 import unicodedata
+from urllib.parse import unquote, urlsplit
 
 NON_WORD = re.compile(r"[\W_]+")
 MAX_TOKEN_CHARS = 80
@@ -16,3 +17,9 @@ def normalize_search_text(text: str) -> str:
 
 def tokenize(text: str) -> list[str]:
     return [word for word in normalize_search_text(text).split(" ") if 0 < len(word) <= MAX_TOKEN_CHARS]
+
+
+def url_text(url: str) -> str:
+    """The searchable words of an address: host name and decoded path."""
+    parts = urlsplit(url)
+    return normalize_search_text(f"{parts.hostname} {unquote(parts.path)}")

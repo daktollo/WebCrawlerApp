@@ -1,15 +1,13 @@
-"""Application settings. Secrets come from backend/.env; everything else is fixed here."""
+"""Application settings."""
 
-import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
-load_dotenv(BACKEND_ROOT / ".env")
-
-DATABASE_URL = os.environ.get("DATABASE_URL")
-DB_SCHEMA = "dijitalvatan"
+PROJECT_ROOT = BACKEND_ROOT.parent
+DB_PATH = BACKEND_ROOT / "data" / "dijitalvatan.db"
+MIGRATIONS_DIR = BACKEND_ROOT / "migrations"
+CRAWLER_LOCK_PATH = BACKEND_ROOT / "data" / "crawler.lock"
+FRONTEND_DIST = PROJECT_ROOT / "frontend" / "dist"
 
 HOST = "127.0.0.1"
 PORT = 8000
