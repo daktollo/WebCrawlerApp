@@ -43,7 +43,6 @@ async def read_status(db: Database) -> dict:
         "startedAt": state.started_at,
         "lastIndexedAt": pages["latest"],
         "revision": state.revision,
-        "canManage": True,
         "recentPages": [{"url": row["url"], "title": row["title"], "indexedAt": row["indexed_at"]} for row in recent_pages],
         "recentErrors": recent_errors,
     }
