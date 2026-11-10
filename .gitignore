@@ -14,3 +14,6 @@ soruce/
 
 # Local database and crawler lock
 backend/data/
+
+# Hand-off note with server passwords; shared privately, never committed
+HOCA_ICIN_TESLIM.md

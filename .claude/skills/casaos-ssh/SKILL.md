@@ -19,6 +19,13 @@ Bilgiler bu klasördeki `.env` dosyasından okunur (gitignored).
   bilgileri **yalnızca oraya** yaz; ardından `chmod 600 .env`.
 - Şifreleri README'ye, dokümanlara, commit'lere veya komut satırına yazma.
 
+## Yayın onayı
+
+Geliştirme yerelde yapılır. Pi'a kod göndermeden, `docker compose build/up/down`
+çalıştırmadan veya konteynerleri değiştirmeden önce kullanıcıya ne yapılacağını özetleyip
+**açık onay** iste; onay yoksa yapma. Her yayın ayrı onay ister. Salt okuma komutları
+(`docker compose ps`, `logs`, `curl` ile durum kontrolü) onay gerektirmez.
+
 ## Kullanım
 
 Proje kökünden:
