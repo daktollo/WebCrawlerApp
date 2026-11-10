@@ -2,7 +2,6 @@
 name = "dijitalvatan"
 version = "0.1.0"
 description = "Dijital Vatan search engine: crawler, inverted index, PageRank and search API"
-readme = "README.md"
 authors = [
     { name = "daktollo", email = "mevlutcanadiyanan@gmail.com" }
 ]

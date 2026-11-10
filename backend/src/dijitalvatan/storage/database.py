@@ -6,8 +6,9 @@ from pathlib import Path
 
 import aiosqlite
 
-PRAGMAS = ("PRAGMA journal_mode = WAL", "PRAGMA foreign_keys = ON", "PRAGMA busy_timeout = 10000",
-           "PRAGMA synchronous = NORMAL")
+# busy_timeout comes first so every later statement waits for locks instead of failing.
+# WAL mode is persistent in the database file and is set by the migration tool.
+PRAGMAS = ("PRAGMA busy_timeout = 10000", "PRAGMA foreign_keys = ON", "PRAGMA synchronous = NORMAL")
 
 
 def now_iso() -> str:
@@ -29,8 +30,13 @@ class Database:
     async def _connect(self) -> aiosqlite.Connection:
         conn = await aiosqlite.connect(self.path, isolation_level=None)
         conn.row_factory = aiosqlite.Row
-        for pragma in PRAGMAS:
-            await conn.execute(pragma)
+        try:
+            for pragma in PRAGMAS:
+                await conn.execute(pragma)
+        except BaseException:
+            # Each connection owns a non-daemon thread; an unclosed one keeps the process from exiting.
+            await conn.close()
+            raise
         return conn
 
     @asynccontextmanager

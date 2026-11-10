@@ -18,6 +18,8 @@ def apply_migrations(db_path: Path, directory: Path) -> list[str]:
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(db_path, isolation_level=None)
     try:
+        # WAL lets the API read while the crawler writes; the mode is stored in the file.
+        conn.execute("PRAGMA journal_mode = WAL")
         conn.execute("CREATE TABLE IF NOT EXISTS schema_migrations (name TEXT PRIMARY KEY, applied_at TEXT NOT NULL)")
         applied = {row[0] for row in conn.execute("SELECT name FROM schema_migrations")}
         newly_applied = []

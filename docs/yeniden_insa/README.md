@@ -1,25 +1,26 @@
-# Dijital Vatan — Yeniden İnşa Planı
+# Dijital Vatan — Arama Motoru (yeniden inşa)
 
-ChatGPT üzerinde yayınlanan "Dijital Vatan — Arama Motoru" sitesinin
-(`https://iz-arama-motoru.radiantthistle2.chatgpt.site/`) bu klasörde, düzenlenebilir
-kaynak koduyla yeniden yazılması.
+Öğrencilere bir web tarayıcısının (crawler) nasıl çalıştığını göstermek için kurulan
+DSAI 301 "Soru 1" arama motoru. Orijinali ChatGPT Sites üzerinde (Cloudflare Workers + D1)
+yayınlanmıştı; kaynak kodu `soruce/` altında yalnızca referans olarak duruyor.
+Bu proje aynı işlevi kendi sunucumuzda, daha sade bir mimariyle çalıştırır.
 
-Orijinal sitenin kaynak kodu indirilemiyor: ön yüz yalnızca derlenmiş (minified) paket
-olarak sunuluyor, source map yok; arka uç (tarayıcı, indeks, veritabanı) hiç dışarı
-açık değil. Bu nedenle proje sıfırdan, orijinalin davranışı referans alınarak yazılacak.
+**Durum (2026-11-10):** Çalışıyor. Arka uç, tarayıcı, SQLite veritabanı ve ön yüz tamam;
+64 test geçiyor; `bogazici.edu.tr` üzerinde 20 sayfalık gerçek tarama yapıldı
+(ölçümler [07](07_calistirma_ve_test.md)'de).
 
-**Seçilen yön:** Python (FastAPI) arka uç + Vite/React ön yüz + Supabase (Postgres), tam kapsam
-(canlı tarama dahil).
-
-**Durum:** Uygulama başladı (Faz 0–4 yazılıyor). Veritabanı: Supabase.
+**Yığın:** Python 3.14 + FastAPI (API ve arka plan tarayıcısı) · SQLite (tek dosya) ·
+Vite + React + TypeScript (orijinal bileşenler taşındı).
 
 ## Belgeler
 
 | Dosya | İçerik |
 |---|---|
-| [01_kaynak_analizi.md](01_kaynak_analizi.md) | Orijinal siteden çıkarılanlar: ekranlar, API cevap biçimleri, durumlar, sınırlar, örnek veri |
-| [02_mimari_ve_veri_modeli.md](02_mimari_ve_veri_modeli.md) | Klasör yapısı, katmanlar, Supabase (Postgres) şeması ve bağlantısı |
-| [03_tarayici_ve_indeks.md](03_tarayici_ve_indeks.md) | Tarayıcı (crawler), kelime ayırma, indeks, PageRank, arama |
-| [04_api.md](04_api.md) | FastAPI uç noktaları ve cevap biçimleri |
-| [05_on_yuz.md](05_on_yuz.md) | Ön yüz ekranları, istemci tarafı Örnek/Colab modu, harita |
-| [06_asamalar_ve_acik_sorular.md](06_asamalar_ve_acik_sorular.md) | Uygulama aşamaları, ölçüm/test planı, verilen kararlar |
+| [01_orijinal_proje.md](01_orijinal_proje.md) | Orijinal sitenin mimarisi ve davranışı, neyi koruduk, neyi değiştirdik |
+| [02_mimari.md](02_mimari.md) | Katmanlar, klasör yapısı, süreç modeli |
+| [03_veri_modeli.md](03_veri_modeli.md) | SQLite şeması ve migration düzeni |
+| [04_tarayici.md](04_tarayici.md) | Tarama döngüsü, kuyruk, robots, istek aralığı, hata kuralları, kontrol işlemleri, PageRank |
+| [05_arama_ve_api.md](05_arama_ve_api.md) | Kelime ayırma, arama, kelime indeksi, harita ve HTTP uç noktaları |
+| [06_on_yuz.md](06_on_yuz.md) | Ön yüzün taşınması, ekranlar, orijinalden farklar |
+| [07_calistirma_ve_test.md](07_calistirma_ve_test.md) | Kurulum, çalıştırma, testler ve ölçümler |
+| [08_kararlar_ve_sonraki_adimlar.md](08_kararlar_ve_sonraki_adimlar.md) | Verilen kararlar, bilinen sınırlar, açık konular |
