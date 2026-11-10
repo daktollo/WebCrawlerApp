@@ -26,6 +26,13 @@ Yeni dosyalar: `index.html` (başlık ve açıklama orijinal `layout.tsx`'ten), 
 - Yönetici girişi olmadığı için "yalnızca site yöneticisi değiştirebilir" dalı,
   "Yönetici" etiketi ve ilgili CSS kuralları (`lc-owner-*`) silindi; tarama yönetimi
   paneli durum yüklenince her zaman görünür.
+- **Mobil sonuç kartı düzeltmesi (orijinalde de vardı):** 540 pikselin altında canlı arama
+  sonuç kartı `flex-wrap` ile iki satıra bölünüyor ve PageRank kutusu `width:100%` alıyordu;
+  içerik sütunu `flex:1` (başlangıç genişliği 0) olduğundan ikisi aynı satıra yerleşiyor,
+  içerik sıfır genişliğe sıkışıp başlık harf harf alt alta diziliyordu. `crawler.css`'te bu
+  kırılımda `.lc-result-main{flex-basis:100%}` eklendi. 390 pikselde ölçüm: içerik sütunu
+  0 → 326 piksel, başlık yüksekliği tek satır (26 piksel). Diğer ekranlarda (Örnek / Colab,
+  harita, kelime indeksi, veri kümesi) sıkışan metin yok; tablolar kendi kutularında kayıyor.
 - Tarama akışı notu: "Tarama sunucu çalıştığı sürece arka planda ilerler. Sunucu kapanınca
   kuyruk saklanır; yeniden açıldığında devam eder."
 
