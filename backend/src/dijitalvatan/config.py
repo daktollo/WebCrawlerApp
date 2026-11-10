@@ -1,18 +1,17 @@
 """Application settings."""
 
+import os
 from pathlib import Path
 
 BACKEND_ROOT = Path(__file__).resolve().parents[2]
-PROJECT_ROOT = BACKEND_ROOT.parent
 DB_PATH = BACKEND_ROOT / "data" / "dijitalvatan.db"
 MIGRATIONS_DIR = BACKEND_ROOT / "migrations"
 CRAWLER_LOCK_PATH = BACKEND_ROOT / "data" / "crawler.lock"
-FRONTEND_DIST = PROJECT_ROOT / "frontend" / "dist"
 
-# The server (site + API + crawler) listens on every interface: in production Nginx Proxy Manager forwards
-# https://dijitalvatan.searchengineplaces.com.tr to http://192.168.1.118:1319.
-HOST = "0.0.0.0"
-PORT = 1319
+# API + crawler. Locally only this machine can reach it; the Docker image sets DIJITALVATAN_HOST=0.0.0.0 so the
+# frontend container (nginx on port 1319) can proxy /api to it.
+HOST = os.environ.get("DIJITALVATAN_HOST", "127.0.0.1")
+PORT = 1320
 
 # Seeds the crawl may start from. The www alias of the university redirects to the bare domain.
 BOGAZICI_REQUESTED_SEED = "https://www.bogazici.edu.tr/"

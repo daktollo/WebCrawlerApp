@@ -9,8 +9,9 @@ Bu proje aynı işlevi kendi sunucumuzda, daha sade bir mimariyle çalıştırı
 64 test geçiyor; `bogazici.edu.tr` üzerinde 20 sayfalık gerçek tarama yapıldı
 (ölçümler [07](07_calistirma_ve_test.md)'de).
 
-**Yığın:** Python 3.14 + FastAPI (API ve arka plan tarayıcısı) · SQLite (tek dosya) ·
-Vite + React + TypeScript (orijinal bileşenler taşındı).
+**Yığın:** Python 3.14 + FastAPI (API ve arka plan tarayıcısı, port 1320) · SQLite (tek dosya) ·
+Vite + React + TypeScript (orijinal bileşenler taşındı; nginx ile port 1319) · Docker Compose,
+Raspberry Pi üzerinde yayın.
 
 ## Belgeler
 
@@ -22,5 +23,5 @@ Vite + React + TypeScript (orijinal bileşenler taşındı).
 | [04_tarayici.md](04_tarayici.md) | Tarama döngüsü, kuyruk, robots, istek aralığı, hata kuralları, kontrol işlemleri, PageRank |
 | [05_arama_ve_api.md](05_arama_ve_api.md) | Kelime ayırma, arama, kelime indeksi, harita ve HTTP uç noktaları |
 | [06_on_yuz.md](06_on_yuz.md) | Ön yüzün taşınması, ekranlar, orijinalden farklar |
-| [07_calistirma_ve_test.md](07_calistirma_ve_test.md) | Kurulum, çalıştırma, testler ve ölçümler |
+| [07_calistirma_ve_test.md](07_calistirma_ve_test.md) | Yerelde çalıştırma, yayın (Docker, Pi), testler ve ölçümler |
 | [08_kararlar_ve_sonraki_adimlar.md](08_kararlar_ve_sonraki_adimlar.md) | Verilen kararlar, bilinen sınırlar, açık konular |

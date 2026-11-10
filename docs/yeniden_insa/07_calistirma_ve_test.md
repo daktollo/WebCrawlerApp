@@ -6,35 +6,24 @@
   `backend/requirements.txt`.
 - Node.js ≥ 22.13 ve npm.
 
-## Kurulum
+## Yerelde çalıştırma (Docker'sız)
 
 ```bash
-# Arka uç
 cd backend
 uv sync                                  # ya da: pip install -r requirements.txt -r requirements-dev.txt && pip install -e .
 uv run python -m dijitalvatan.migrate    # backend/data/dijitalvatan.db oluşturur / günceller
+uv run python -m dijitalvatan.main       # backend: http://127.0.0.1:1320
 
-# Ön yüz
 cd ../frontend
 npm install
-npm run build                            # frontend/dist
+npm run dev                              # site: http://127.0.0.1:5175 (/api → 1320)
 ```
-
-## Çalıştırma
-
-```bash
-cd backend
-uv run python -m dijitalvatan.main      # 0.0.0.0:1319 → http://127.0.0.1:1319  (site + API + tarayıcı)
-```
-
-Ön yüz üzerinde çalışırken: arka uç açıkken `cd frontend && npm run dev` →
-http://127.0.0.1:5175 (değişiklikler anında yansır).
 
 Taramayı başlatmak: sitede "Canlı arama" → "Tarama yönetimi" → başlangıç adresi ve sayfa
 sınırı → "Taramayı başlat". Aynı şey komut satırından:
 
 ```bash
-curl -X POST http://127.0.0.1:1319/api/crawl/control -H 'Content-Type: application/json' \
+curl -X POST http://127.0.0.1:1320/api/crawl/control -H 'Content-Type: application/json' \
   -d '{"action":"start","seed":"https://www.bogazici.edu.tr/","maxPages":200}'
 ```
 
@@ -43,12 +32,15 @@ curl -X POST http://127.0.0.1:1319/api/crawl/control -H 'Content-Type: applicati
 | | |
 |---|---|
 | Adres | https://dijitalvatan.searchengineplaces.com.tr |
-| Ters vekil | Nginx Proxy Manager, proxy host: `http` → `192.168.1.118:1319`, Websockets açık, erişim listesi "Publicly Accessible" |
-| Sunucu | `192.168.1.118` üzerinde `uv run python -m dijitalvatan.main` (`0.0.0.0:1319`); ön yüz önceden `npm run build` ile derlenmiş olmalı |
+| Sunucu | Raspberry Pi 5 `192.168.1.118` (Ubuntu 24.04, arm64), klasör `~/dijitalvatan` |
+| Ters vekil | Nginx Proxy Manager (Pi'de 80/443), proxy host `http` → `192.168.1.118:1319`, Websockets açık, "Publicly Accessible" — ayarlı |
+| Konteynerler | `frontend` 1319 (nginx) · `backend` 1320 (yalnızca `127.0.0.1`) · volume `dijitalvatan_dijitalvatan-data` |
+| Erişim | SSH dışarıya kapalı; komutlar `.claude/skills/casaos-ssh` ile CasaOS web terminalinden |
 
-Durum (2026-11-10): proxy kaydı hazırlandı; alan adı için DNS kaydı henüz çözülmüyor ve
-uygulama `192.168.1.118`'e kurulmadı. Site herkese açık olacağı için tarama yönetimi
-(`POST /api/crawl/control`) korunmalı ([08](08_kararlar_ve_sonraki_adimlar.md)).
+Adımlar kök [README](../../README.md#yayın-raspberry-pi-docker)'de: kod arşivi aktarılır,
+`sudo docker compose build` ve `up -d`. Backend konteyneri açılışta migration'ları uygular.
+Site herkese açık olduğu için tarama yönetimi (`POST /api/crawl/control`) korunmalı
+([08](08_kararlar_ve_sonraki_adimlar.md)).
 
 ## Testler
 
@@ -83,6 +75,7 @@ Seed `https://www.bogazici.edu.tr/`, sınır 20:
 | Kelime / keşfedilen bağlantı | 2.051 / 2.368 (harita: 157 bağlantı, iki ucu da indekslenmiş) |
 | Arama ("Boğaziçi araştırma") | 13 sonuç, 7 ms |
 
-Sunucu yeniden başlatıldıktan sonra indeks ve tarama durumu korunmuş olarak geldi.
+Sunucu yeniden başlatıldıktan sonra indeks ve tarama durumu korunmuş olarak geldi
+(ölçümler yerel, Docker'sız çalıştırmada alındı).
 Hatalar beklenen türdendi: `arsivmerkezi.bogazici.edu.tr` DNS/bağlantı hatası,
 `vimeo.com` `noindex`, `harita.bogazici.edu.tr` robots.txt yerine HTML döndürdü.

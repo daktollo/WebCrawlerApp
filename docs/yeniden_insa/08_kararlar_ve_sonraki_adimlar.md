@@ -13,7 +13,8 @@
 | 2026-11-10 | Veritabanı Supabase değil, yerel SQLite |
 | 2026-11-10 | Seed listesi şimdilik sabit (`bogazici.edu.tr`, `www.tsk.gov.tr`, `www.tsk.tr`) |
 | 2026-11-10 | Migration'ları geliştirici (Claude) uygular |
-| 2026-11-10 | Yayın adresi `dijitalvatan.searchengineplaces.com.tr`; sunucu 1319 portunda (`0.0.0.0`) |
+| 2026-11-10 | Yayın adresi `dijitalvatan.searchengineplaces.com.tr`, Raspberry Pi `192.168.1.118` |
+| 2026-11-10 | Docker Compose: `backend/docker` ve `frontend/docker`; frontend (nginx) **1319**, backend **1320** |
 
 ## Bilinen sınırlar
 
@@ -34,6 +35,6 @@
   sunup seed listesine eklemek (derste deterministik, birkaç saniyelik tarama).
   `searchengineplaces.com.tr` yayında; doğrudan seed olarak eklemek de bir seçenek.
 - **Yayın:** Site `https://dijitalvatan.searchengineplaces.com.tr` adresinden herkese açık
-  olacak (Nginx Proxy Manager → `192.168.1.118:1319`). Giriş olmadığı için şu an internetteki
+  olacak (Nginx Proxy Manager → `192.168.1.118:1319` → frontend konteyneri). Giriş olmadığı için şu an internetteki
   herkes taramayı başlatıp sıfırlayabilir; `POST /api/crawl/control` için yetki (ör. NPM
   erişim listesiyle bu yolu kilitlemek ya da uygulamada yönetici anahtarı) karara bağlanmalı.

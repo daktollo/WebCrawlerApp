@@ -2,16 +2,22 @@
 
 ## Süreç modeli
 
-Tek bir Python süreci (`uv run python -m dijitalvatan.main`, `0.0.0.0:1319`):
+Yayında iki Docker konteyneri (`docker-compose.yml`):
 
-- **FastAPI** `/api/crawl/*` uç noktalarını sunar.
-- **Arka plan tarayıcısı** aynı süreçte bir `asyncio` görevi olarak çalışır.
-  `backend/data/crawler.lock` üzerinde özel bir dosya kilidi (`flock`) alır; ikinci bir
-  sunucu açılırsa API'yi sunar ama taramaz (logda hata satırı yazılır).
-- **Ön yüz** derlendiyse (`frontend/dist`) aynı adresten statik olarak sunulur.
-  Geliştirmede Vite (port 5175) `/api` isteklerini 1319'a yönlendirir.
-- **Yayın:** Nginx Proxy Manager `https://dijitalvatan.searchengineplaces.com.tr` adresini
-  `http://192.168.1.118:1319`'a iletir ([07](07_calistirma_ve_test.md#yayın)).
+| Servis | Port | Görevi |
+|---|---|---|
+| `frontend` | **1319** (dışarıya açık) | nginx; derlenmiş React sitesini sunar, `/api/*` isteklerini `backend:1320`'ye iletir |
+| `backend` | **1320** (Pi'de yalnızca `127.0.0.1`) | FastAPI `/api/crawl/*` + arka plan tarayıcısı; açılışta migration'ları uygular |
+
+Nginx Proxy Manager `https://dijitalvatan.searchengineplaces.com.tr` adresini Pi'deki
+`http://192.168.1.118:1319`'a iletir ([07](07_calistirma_ve_test.md#yayın)).
+
+- **Backend** tek bir Python süreci (`python -m dijitalvatan.main`). Arka plan tarayıcısı aynı
+  süreçte bir `asyncio` görevidir. `data/crawler.lock` üzerinde özel bir dosya kilidi (`flock`)
+  alır; ikinci bir süreç açılırsa API'yi sunar ama taramaz (logda hata satırı yazılır).
+  Dinlediği adres `config.HOST`: yerelde `127.0.0.1`, Docker imajında
+  `DIJITALVATAN_HOST=0.0.0.0` (nginx konteyneri erişebilsin diye).
+- **Yerel geliştirme:** backend `127.0.0.1:1320`, Vite geliştirme sunucusu `5175` (`/api` → 1320).
 - **SQLite** WAL modunda (migration aracı açar, dosyada kalıcıdır): tarayıcı yazarken API
   okumaya devam eder. Her işlem kendi bağlantısını açar; bağlantının ilk ayarı
   `busy_timeout = 10 sn` (kilit varsa hata yerine bekler). Yazma işlemleri
@@ -27,6 +33,7 @@ SQL yalnızca `storage/` altındaki sınıflarda.
 ```
 backend/
 ├── migrations/001_initial.sql        # SQLite şeması
+├── docker/                           # Dockerfile, entrypoint.sh (migration + sunucu)
 ├── requirements.txt                  # uv export (çalışma bağımlılıkları)
 ├── requirements-dev.txt              # test bağımlılıkları
 ├── data/                             # dijitalvatan.db, crawler.lock, server.log (git dışı)
@@ -35,7 +42,7 @@ backend/
 │   ├── main.py                       # sunucuyu başlatır
 │   ├── migrate.py                    # migration'ları uygular
 │   ├── api/
-│   │   ├── app.py                    # FastAPI, yaşam döngüsü, hata biçimi, statik ön yüz
+│   │   ├── app.py                    # FastAPI, yaşam döngüsü, hata biçimi
 │   │   └── crawl_routes.py           # uç noktalar ve istek doğrulama
 │   ├── crawler/
 │   │   ├── url_rules.py              # URL normalleştirme, genel adres kuralları
@@ -50,7 +57,8 @@ backend/
 │   ├── storage/                      # database.py + tablo başına repository sınıfları
 │   └── views/                        # durum, arama, harita, kelime indeksi JSON'ları
 └── tests/                            # birim, entegrasyon ve API testleri
-frontend/                             # bkz. 06_on_yuz.md
+frontend/                             # bkz. 06_on_yuz.md; frontend/docker/ → nginx imajı
+docker-compose.yml                    # frontend (1319) + backend (1320) + veri volume'ü
 ```
 
 ## Neden bu tasarım

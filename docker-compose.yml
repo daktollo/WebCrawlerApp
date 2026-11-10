@@ -1,0 +1,26 @@
+# Dijital Vatan: frontend (nginx, port 1319) → backend (FastAPI + crawler, port 1320) → SQLite volume.
+name: dijitalvatan
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: docker/Dockerfile
+    ports:
+      - "127.0.0.1:1320:1320"   # only reachable from the host itself, e.g. for curl checks
+    volumes:
+      - dijitalvatan-data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: docker/Dockerfile
+    ports:
+      - "1319:1319"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  dijitalvatan-data:

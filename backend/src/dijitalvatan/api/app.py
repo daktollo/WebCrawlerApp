@@ -1,4 +1,4 @@
-"""FastAPI application: crawl API, the background crawler and the built frontend."""
+"""FastAPI application: crawl API and the background crawler."""
 
 import asyncio
 import fcntl
@@ -8,7 +8,6 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
 
 from dijitalvatan import config
@@ -84,10 +83,3 @@ async def unexpected_error(request: Request, error: Exception):
     # Starlette logs the traceback of exceptions reaching this handler.
     return JSONResponse({"ok": False, "error": "Sunucuda beklenmeyen bir hata oluştu. Ayrıntı sunucu kaydında."},
                         status_code=500, headers=NO_STORE)
-
-
-if config.FRONTEND_DIST.is_dir():
-    app.mount("/", StaticFiles(directory=config.FRONTEND_DIST, html=True), name="frontend")
-else:
-    logger.warning("%s not found: serving the API only. Build the frontend with `npm run build` in frontend/.",
-                   config.FRONTEND_DIST)
