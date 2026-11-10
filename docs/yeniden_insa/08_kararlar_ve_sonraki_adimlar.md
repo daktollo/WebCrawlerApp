@@ -13,6 +13,7 @@
 | 2026-11-10 | Veritabanı Supabase değil, yerel SQLite |
 | 2026-11-10 | Seed listesi şimdilik sabit (`bogazici.edu.tr`, `www.tsk.gov.tr`, `www.tsk.tr`) |
 | 2026-11-10 | Migration'ları geliştirici (Claude) uygular |
+| 2026-11-10 | Yayın adresi `dijitalvatan.searchengineplaces.com.tr`; sunucu 1319 portunda (`0.0.0.0`) |
 
 ## Bilinen sınırlar
 
@@ -32,5 +33,7 @@
 - **Yerel örnek site:** "Search Engine Places" örnek grafını gerçek HTML sayfaları olarak
   sunup seed listesine eklemek (derste deterministik, birkaç saniyelik tarama).
   `searchengineplaces.com.tr` yayında; doğrudan seed olarak eklemek de bir seçenek.
-- **Yayın:** Sitenin öğrencilere internetten açılıp açılmayacağı ve nerede (VPS vb.)
-  barınacağı henüz belirlenmedi; açılırsa tarama yönetimi için yetki gerekecek.
+- **Yayın:** Site `https://dijitalvatan.searchengineplaces.com.tr` adresinden herkese açık
+  olacak (Nginx Proxy Manager → `192.168.1.118:1319`). Giriş olmadığı için şu an internetteki
+  herkes taramayı başlatıp sıfırlayabilir; `POST /api/crawl/control` için yetki (ör. NPM
+  erişim listesiyle bu yolu kilitlemek ya da uygulamada yönetici anahtarı) karara bağlanmalı.

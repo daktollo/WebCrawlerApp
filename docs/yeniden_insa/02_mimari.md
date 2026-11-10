@@ -2,14 +2,16 @@
 
 ## Süreç modeli
 
-Tek bir Python süreci (`uv run python -m dijitalvatan.main`, port 8000):
+Tek bir Python süreci (`uv run python -m dijitalvatan.main`, `0.0.0.0:1319`):
 
 - **FastAPI** `/api/crawl/*` uç noktalarını sunar.
 - **Arka plan tarayıcısı** aynı süreçte bir `asyncio` görevi olarak çalışır.
   `backend/data/crawler.lock` üzerinde özel bir dosya kilidi (`flock`) alır; ikinci bir
   sunucu açılırsa API'yi sunar ama taramaz (logda hata satırı yazılır).
 - **Ön yüz** derlendiyse (`frontend/dist`) aynı adresten statik olarak sunulur.
-  Geliştirmede Vite (port 5175) `/api` isteklerini 8000'e yönlendirir.
+  Geliştirmede Vite (port 5175) `/api` isteklerini 1319'a yönlendirir.
+- **Yayın:** Nginx Proxy Manager `https://dijitalvatan.searchengineplaces.com.tr` adresini
+  `http://192.168.1.118:1319`'a iletir ([07](07_calistirma_ve_test.md#yayın)).
 - **SQLite** WAL modunda (migration aracı açar, dosyada kalıcıdır): tarayıcı yazarken API
   okumaya devam eder. Her işlem kendi bağlantısını açar; bağlantının ilk ayarı
   `busy_timeout = 10 sn` (kilit varsa hata yerine bekler). Yazma işlemleri

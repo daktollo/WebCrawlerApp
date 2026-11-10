@@ -18,7 +18,7 @@ Orijinal dosyalar klasör adları korunarak `frontend/src/` altına kopyalandı:
 | `app/globals.css`, `crawler.css`, `explorer.css` | Orijinal stiller |
 
 Yeni dosyalar: `index.html` (başlık ve açıklama orijinal `layout.tsx`'ten), `src/main.tsx`,
-`vite.config.ts` (`@/` → `src/`, geliştirmede `/api` → `127.0.0.1:8000`), `tsconfig.json`.
+`vite.config.ts` (`@/` → `src/`, geliştirmede `/api` → `127.0.0.1:1319`), `tsconfig.json`.
 
 ## Orijinalden farklar
 
@@ -36,5 +36,5 @@ da açıldı; konsolda hata ve uyarı yok (2026-11-10).
 ## Derleme
 
 - `npm run build` → `tsc --noEmit` + `vite build` → `frontend/dist` (JS 297 kB, gzip 89 kB).
-- Arka uç `frontend/dist`'i `/` adresinden sunar; `dist` yoksa sadece API çalışır ve logda
+- Arka uç `frontend/dist`'i `/` adresinden, 1319 portunda sunar; `dist` yoksa sadece API çalışır ve logda
   uyarı yazar.

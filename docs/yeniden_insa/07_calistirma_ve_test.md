@@ -24,7 +24,7 @@ npm run build                            # frontend/dist
 
 ```bash
 cd backend
-uv run python -m dijitalvatan.main      # http://127.0.0.1:8000  (site + API + tarayıcı)
+uv run python -m dijitalvatan.main      # 0.0.0.0:1319 → http://127.0.0.1:1319  (site + API + tarayıcı)
 ```
 
 Ön yüz üzerinde çalışırken: arka uç açıkken `cd frontend && npm run dev` →
@@ -34,9 +34,21 @@ Taramayı başlatmak: sitede "Canlı arama" → "Tarama yönetimi" → başlang�
 sınırı → "Taramayı başlat". Aynı şey komut satırından:
 
 ```bash
-curl -X POST http://127.0.0.1:8000/api/crawl/control -H 'Content-Type: application/json' \
+curl -X POST http://127.0.0.1:1319/api/crawl/control -H 'Content-Type: application/json' \
   -d '{"action":"start","seed":"https://www.bogazici.edu.tr/","maxPages":200}'
 ```
+
+## Yayın
+
+| | |
+|---|---|
+| Adres | https://dijitalvatan.searchengineplaces.com.tr |
+| Ters vekil | Nginx Proxy Manager, proxy host: `http` → `192.168.1.118:1319`, Websockets açık, erişim listesi "Publicly Accessible" |
+| Sunucu | `192.168.1.118` üzerinde `uv run python -m dijitalvatan.main` (`0.0.0.0:1319`); ön yüz önceden `npm run build` ile derlenmiş olmalı |
+
+Durum (2026-11-10): proxy kaydı hazırlandı; alan adı için DNS kaydı henüz çözülmüyor ve
+uygulama `192.168.1.118`'e kurulmadı. Site herkese açık olacağı için tarama yönetimi
+(`POST /api/crawl/control`) korunmalı ([08](08_kararlar_ve_sonraki_adimlar.md)).
 
 ## Testler
 

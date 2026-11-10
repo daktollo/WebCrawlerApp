@@ -9,8 +9,10 @@ MIGRATIONS_DIR = BACKEND_ROOT / "migrations"
 CRAWLER_LOCK_PATH = BACKEND_ROOT / "data" / "crawler.lock"
 FRONTEND_DIST = PROJECT_ROOT / "frontend" / "dist"
 
-HOST = "127.0.0.1"
-PORT = 8000
+# The server (site + API + crawler) listens on every interface: in production Nginx Proxy Manager forwards
+# https://dijitalvatan.searchengineplaces.com.tr to http://192.168.1.118:1319.
+HOST = "0.0.0.0"
+PORT = 1319
 
 # Seeds the crawl may start from. The www alias of the university redirects to the bare domain.
 BOGAZICI_REQUESTED_SEED = "https://www.bogazici.edu.tr/"

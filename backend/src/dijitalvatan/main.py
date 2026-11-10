@@ -1,4 +1,4 @@
-"""Start the server: API, background crawler and (when built) the frontend on http://HOST:PORT.
+"""Start the server: API, background crawler and (when built) the frontend on HOST:PORT (0.0.0.0:1319).
 
 Run: uv run python -m dijitalvatan.main
 """
