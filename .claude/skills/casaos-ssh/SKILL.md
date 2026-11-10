@@ -5,8 +5,9 @@ description: Run shell commands on the project's Raspberry Pi 5 deployment serve
 
 # CasaOS üzerinden Raspberry Pi'da komut çalıştırma
 
-Sunucu bir **Raspberry Pi 5** (Ubuntu 24.04, `aarch64`). Modem yalnızca CasaOS panelinin
-portunu dışarı yönlendiriyor; SSH portu dışarıdan erişilemez. Bu script CasaOS'a
+Sunucu bir **Raspberry Pi 5** (Ubuntu 24.04, `aarch64`, yerel IP `192.168.1.118`). Modem
+CasaOS panelinin portunu ve Nginx Proxy Manager için 80/443'ü dışarı yönlendiriyor; SSH portu
+dışarıdan erişilemez. Bu script CasaOS'a
 giriş yapar, CasaOS'un `/v1/sys/wsssh` WebSocket'i üzerinden Pi'ın kendi içinden
 SSH oturumu açar, tek komutu çalıştırır ve çıktıyı uzak çıkış koduyla döndürür.
 
@@ -34,21 +35,23 @@ uv run --quiet .claude/skills/casaos-ssh/casaos_ssh.py 'uname -a; df -h /'
   (Docker build) Pi'da arka planda başlat ve logu ayrı çağrılarla izle:
 
   ```bash
-  uv run --quiet .claude/skills/casaos-ssh/casaos_ssh.py 'cd ~/dijitalvatan && sudo -v && { nohup sudo -n docker compose build > build.log 2>&1 & }'
-  uv run --quiet .claude/skills/casaos-ssh/casaos_ssh.py 'tail -n 30 ~/dijitalvatan/build.log'
+  uv run --quiet .claude/skills/casaos-ssh/casaos_ssh.py 'cd ~/dijitalvatan && sudo sh -c "nohup docker compose build > build.log 2>&1 &"'
+  uv run --quiet .claude/skills/casaos-ssh/casaos_ssh.py 'tail -n 30 ~/dijitalvatan/build.log; pgrep -f "docker compose build" >/dev/null && echo SÜRÜYOR || echo BİTTİ'
   ```
 
-  `sudo -v` şifreyi önde (ön planda) sorar; arka plandaki `sudo -n` önbelleğe alınmış
-  yetkiyi kullanır. `{ ... & }` parantezi şart: yoksa `&` tüm `sudo -v && ...`
-  zincirini arka plana atar, sudo şifre sorusunda durur (Stopped) ve iş hiç başlamaz.
+  `sudo` ön planda çalışır, şifre sorusunu script yanıtlar; derlemeyi root yetkili kabuk
+  arka plana atar ve `sudo` hemen döner. `build.log` root'a ait olur.
+  `sudo -v && { nohup sudo -n ... & }` kalıbını kullanma: bu Pi'da arka plandaki `sudo -n`
+  önbelleğe alınmış yetkiyi bulamıyor ("sudo: a password is required") ve derleme hiç
+  başlamıyor (2026-11-10'da denendi).
 
 ## sudo ve Docker
 
 - **Docker sudo ister:** her zaman `sudo docker ...`, `sudo docker compose ...`.
 - Script `[sudo] password for ...` sorusunu `.env`'deki `SSH_PASSWORD` ile
   kendisi yanıtlar.
-- Her `sudo` çağrısı ~20 sn bekler (Pi'da `hostname` çözümlemesi ~10 sn sürüyor),
-  önbellekli `sudo -n` dahil; takılma sanma.
+- Her `sudo` çağrısı ~20 sn bekler (Pi'da `hostname` çözümlemesi ~10 sn sürüyor);
+  takılma sanma.
 
 ## Docker build: hedef mimari arm64
 
@@ -58,3 +61,19 @@ uv run --quiet .claude/skills/casaos-ssh/casaos_ssh.py 'uname -a; df -h /'
 - Taban imajlar arm64 sürümü olan resmi imajlar olmalı (`python:3.14-slim`,
   `node:22-alpine` gibi); yalnızca amd64 yayınlanan imajları kullanma.
 - Pi'da SD kart ~21 GB boş: build sonrası `sudo docker image prune` ile yer aç.
+
+## Dosya aktarma
+
+Script dosya yükleyemez, ama komut satırı uzun olabilir: 100 KB'lık tek satır bozulmadan
+geçti (sha256 ile doğrulandı). Proje kodu bu yüzden arşiv olarak, ~90 KB'lık base64
+parçalarıyla gönderilir:
+
+```bash
+git archive --format=tar.gz -o /tmp/app.tar.gz HEAD -- . ':!.claude'
+base64 -w0 /tmp/app.tar.gz | split -b 90000 -d - /tmp/part.
+# her parça için:  casaos_ssh.py "printf %s '$(cat /tmp/part.00)' >> /tmp/dv.b64"
+# sonra Pi'da:      base64 -d /tmp/dv.b64 > /tmp/dv.tar.gz && sha256sum /tmp/dv.tar.gz
+#                   tar xzf /tmp/dv.tar.gz -C ~/dijitalvatan
+```
+
+İlk parçadan önce `/tmp/dv.b64`'ü silin; sha256'yı yerel arşivle karşılaştırın.
