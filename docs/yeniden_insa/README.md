@@ -5,7 +5,7 @@ DSAI 301 "Soru 1" arama motoru. Orijinali ChatGPT Sites üzerinde (Cloudflare Wo
 yayınlanmıştı; kaynak kodu `soruce/` altında yalnızca referans olarak duruyor.
 Bu proje aynı işlevi kendi sunucumuzda, daha sade bir mimariyle çalıştırır.
 
-**Durum (2026-11-10):** Çalışıyor. Arka uç, tarayıcı, SQLite veritabanı ve ön yüz tamam;
+**Durum (2026-11-10):** Raspberry Pi'de Docker ile çalışıyor (DNS ve SSL bekleniyor). Arka uç, tarayıcı, SQLite veritabanı ve ön yüz tamam;
 64 test geçiyor; `bogazici.edu.tr` üzerinde 20 sayfalık gerçek tarama yapıldı
 (ölçümler [07](07_calistirma_ve_test.md)'de).
 

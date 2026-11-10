@@ -39,6 +39,19 @@ curl -X POST http://127.0.0.1:1320/api/crawl/control -H 'Content-Type: applicati
 
 Adımlar kök [README](../../README.md#yayın-raspberry-pi-docker)'de: kod arşivi aktarılır,
 `sudo docker compose build` ve `up -d`. Backend konteyneri açılışta migration'ları uygular.
+
+**Yayın durumu (2026-11-10):**
+
+| Kontrol (Pi üzerinden) | Sonuç |
+|---|---|
+| `docker compose ps` | `backend` ve `frontend` çalışıyor |
+| `127.0.0.1:1320/api/crawl/status` | 200 (migration açılışta uygulandı, boş veritabanı) |
+| `127.0.0.1:1319/` ve `/api/crawl/status` | 200 / 200 |
+| `192.168.1.118:1319` (LAN) | 200 |
+| `192.168.1.118:1320` (LAN) | bağlantı yok — beklendiği gibi kapalı |
+| NPM, `Host: dijitalvatan.searchengineplaces.com.tr` ile http | 200 |
+| NPM https | sertifika yok — NPM'de SSL sekmesinden Let's Encrypt alınmalı |
+| Herkese açık DNS | `dijitalvatan` kaydı yok; A kaydı Pi'nin dış IP'sine (`95.173.229.167`) yazılmalı |
 Site herkese açık olduğu için tarama yönetimi (`POST /api/crawl/control`) korunmalı
 ([08](08_kararlar_ve_sonraki_adimlar.md)).
 

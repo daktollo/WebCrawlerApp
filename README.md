@@ -44,7 +44,10 @@ git archive --format=tar.gz HEAD > /tmp/dijitalvatan.tar.gz
 
 # 2) Pi'de derle ve başlat
 cd ~/dijitalvatan
-sudo docker compose build          # uzun sürer; arka planda başlatıp logu izleyin
+# Derleme uzun sürer: sudo ön planda şifreyi alır, derleme root kabuğundan arka plana atılır.
+# (`sudo -v` + `nohup sudo -n ...` kalıbı bu Pi'de "a password is required" ile başlamadı.)
+sudo sh -c "nohup docker compose build > build.log 2>&1 &"
+tail -n 20 build.log               # ayrı çağrılarla izleyin
 sudo docker compose up -d
 sudo docker image prune -f         # SD kartta yer aç
 
